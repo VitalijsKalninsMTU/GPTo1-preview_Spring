@@ -1,0 +1,108 @@
+type Pet {
+    id: ID!
+    name: String!
+    animalType: String!
+    breed: String!
+    age: Int!
+    householdEircode: String! # If you want to show which household the pet belongs to
+}
+
+type NameAnimalTypeBreed {
+    name: String!
+    animalType: String!
+    breed: String!
+}
+
+type PetStatistics {
+    averageAge: Float
+    oldestAge: Int
+    totalCount: Int
+}
+
+input CreatePetInput {
+    name: String!
+    animalType: String!
+    breed: String!
+    age: Int!
+    eircode: String!
+}
+
+input UpdatePetInput {
+    name: String!
+    age: Int!
+    animalType: String
+    breed: String
+}
+
+type Household {
+    eircode: String!
+    numberOfOccupants: Int!
+    maxNumberOfOccupants: Int!
+    ownerOccupied: Boolean!
+    # Omit pets for the Household type to avoid recursion or define a separate type for WithPets
+}
+
+type HouseholdWithoutPets {
+    eircode: String!
+    numberOfOccupants: Int!
+    maxNumberOfOccupants: Int!
+    ownerOccupied: Boolean!
+}
+
+type HouseholdWithPets {
+    eircode: String!
+    numberOfOccupants: Int!
+    maxNumberOfOccupants: Int!
+    ownerOccupied: Boolean!
+    pets: [Pet!]!
+}
+
+type HouseholdStatistics {
+    numberOfEmptyHouses: Int!
+    numberOfFullHouses: Int!
+}
+
+input CreateHouseholdInput {
+    eircode: String!
+    numberOfOccupants: Int!
+    maxNumberOfOccupants: Int!
+    ownerOccupied: Boolean!
+}
+
+input UpdateHouseholdInput {
+    numberOfOccupants: Int!
+    maxNumberOfOccupants: Int!
+    ownerOccupied: Boolean!
+}
+
+type Query {
+    # Pets
+    pets: [Pet!]!
+    petById(id: ID!): Pet
+    petsByAnimalType(animalType: String!): [Pet!]!
+    petsByBreed(breed: String!): [Pet!]!
+    petNameAnimalTypeBreed: [NameAnimalTypeBreed!]!
+    petStatistics: PetStatistics!
+
+    # Households
+    households: [Household!]!
+    householdByIdWithoutPets(eircode: String!): HouseholdWithoutPets
+    householdByIdWithPets(eircode: String!): HouseholdWithPets
+    householdsNoPets: [Household!]!
+    householdsOwnerOccupied: [Household!]!
+    householdStatistics: HouseholdStatistics!
+}
+
+type Mutation {
+    # Pet Mutations
+    createPet(input: CreatePetInput!): Pet!
+    updatePet(id: ID!, input: UpdatePetInput!): Pet!
+    deletePetById(id: ID!): Boolean!
+    deletePetsByName(name: String!): Boolean!
+
+    # Household Mutations
+    createHousehold(input: CreateHouseholdInput!): Household!
+    updateHousehold(eircode: String!, input: UpdateHouseholdInput!): Household!
+    deleteHousehold(eircode: String!): Boolean!
+    deletePetsByNameFromHousehold(name: String!): Boolean!
+}
